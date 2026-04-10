@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemilos SMAN 1 Sleman 2026</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        .animate-bounce-in {
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animation-fade-in {
+            animation: fadeIn 0.4s ease-in;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .progress-bar-animate {
+            animation: progress 3s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 flex flex-col font-sans">
+
+    <!-- HEADER -->
+    <header class="bg-white shadow-md py-4 px-6 mb-8 rounded-b-xl border-t-4 border-orange-600">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <!-- Ganti atribut src di bawah ini dengan URL atau path logo SMAN 1 Sleman Anda -->
+                <img src="logo-sman1.png" alt="Logo SMAN 1 Sleman" class="w-12 h-12 md:w-14 md:h-14 object-contain rounded-full">
+                
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-gray-800">SMA Negeri 1 Sleman</h1>
+                    <p class="text-sm text-gray-500 font-medium tracking-wide">Aplikasi Pemilos Tahun 2026</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-center md:items-end bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
+                <div id="clock-time" class="text-2xl font-mono font-bold text-orange-700 tracking-wider">00:00:00</div>
+                <div id="clock-date" class="text-xs text-gray-500 font-medium">Memuat tanggal...</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4">
+        
+        <!-- VIEW 1: HALAMAN LOGIN -->
+        <div id="view-login" class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden animation-fade-in">
+            <div id="login-header" class="p-6 text-center transition-colors bg-orange-600">
+                <h2 class="text-2xl font-bold text-white mb-1">Selamat Datang</h2>
+                <p id="login-subtitle" class="text-white text-opacity-90 text-sm">Silakan masuk untuk memberikan suara Anda</p>
+            </div>
+            
+            <form id="login-form" class="p-8">
+                <!-- Peringatan Waktu Ditutup -->
+                <div id="time-warning" class="hidden mb-6 bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-sm text-center font-medium">
+                    Waktu pemilihan hanya dibuka pada pukul <br/><span class="text-lg font-bold">08:00 - 14:00</span>
+                </div>
+
+                <!-- Peringatan Error -->
+                <div id="login-error" class="hidden mb-4 bg-red-50 text-red-600 p-3 rounded-lg flex items-start gap-2 text-sm text-left">
+                    <i class="fa-solid fa-circle-exclamation mt-0.5 flex-shrink-0"></i>
+                    <span id="login-error-text">Pesan error</span>
+                </div>
+                
+                <div class="mb-5">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
+                    <input id="username" type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all" placeholder="Masukkan username" required>
+                </div>
+                
+                <div class="mb-8">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
+                    <input id="password" type="password" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all" placeholder="Masukkan password" required>
+                </div>
+                
+                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all transform hover:-translate-y-0.5">
+                    MASUK SEKARANG
+                </button>
+            </form>
+        </div>
+
+        <!-- VIEW 2: HALAMAN PEMILIHAN -->
+        <div id="view-voting" class="hidden w-full max-w-6xl mx-auto animation-fade-in">
+            <div class="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-xl shadow-sm mb-8 border border-gray-100">
+                <div class="flex items-center gap-4 mb-4 md:mb-0">
+                    <div class="bg-orange-100 p-3 rounded-full text-orange-600 flex items-center justify-center">
+                        <i class="fa-solid fa-circle-user text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Pemilih Aktif:</p>
+                        <h3 id="voter-name" class="text-xl font-bold text-gray-800">Nama Siswa</h3>
+                        <p id="voter-class" class="font-medium text-orange-600">Kelas</p>
+                    </div>
+                </div>
+                <button onclick="handleLogout()" class="flex items-center gap-2 text-gray-500 hover:text-red-600 transition-colors px-4 py-2 rounded-lg hover:bg-red-50">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span class="font-medium">Keluar</span>
+                </button>
+            </div>
+
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-3">Pilih Kandidat Ketua OSIS</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Klik pada foto atau tombol pilih pada kandidat pilihan Anda. Gunakan hak suara Anda dengan bijak, satu suara menentukan masa depan sekolah.</p>
+            </div>
+
+            <!-- Container Kandidat yang akan diisi oleh JS -->
+            <div id="candidates-container" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+        </div>
+
+        <!-- VIEW 3: HALAMAN ADMIN (SPREADSHEET) -->
+        <div id="view-admin" class="hidden w-full max-w-6xl mx-auto animation-fade-in bg-white rounded-xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-orange-100 w-12 h-12 flex items-center justify-center rounded-xl text-orange-700">
+                        <i class="fa-solid fa-database text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Data Pemilih (Spreadsheet)</h2>
+                        <p class="text-gray-500 text-sm">Rekapitulasi waktu real-time</p>
+                    </div>
+                </div>
+                <button onclick="handleLogout()" class="flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg font-medium transition-colors">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-700">
+                            <th class="p-4 rounded-tl-lg font-semibold">Waktu Memilih</th>
+                            <th class="p-4 font-semibold">Nama Pemilih</th>
+                            <th class="p-4 font-semibold">Kelas</th>
+                            <th class="p-4 rounded-tr-lg font-semibold">Kandidat Dipilih</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body">
+                        <!-- Data Tabel akan diisi oleh JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 flex justify-between items-center text-sm text-gray-500">
+                <p>Total Suara Masuk: <span id="total-votes" class="font-bold text-orange-600">0</span></p>
+                <button onclick="resetData()" class="text-red-500 hover:text-red-700 underline">
+                    Reset Data (Untuk Testing)
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL 1: SUKSES LOGIN -->
+    <div id="modal-login" class="hidden fixed inset-0 bg-orange-900 bg-opacity-80 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform scale-100 animate-bounce-in">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 text-green-500">
+                <i class="fa-solid fa-circle-check text-5xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Anda berhasil login!</h2>
+            <div class="bg-gray-50 rounded-xl p-4 mt-4 border border-gray-100">
+                <p class="text-gray-500 text-sm mb-1">Selamat Datang,</p>
+                <p id="modal-voter-name" class="text-lg font-bold text-orange-700">Nama</p>
+                <p id="modal-voter-class" class="font-semibold text-gray-600">Kelas</p>
+            </div>
+            <p class="text-xs text-gray-400 mt-6 animate-pulse">Mempersiapkan surat suara...</p>
+        </div>
+    </div>
+
+    <!-- MODAL 2: SUKSES MEMILIH -->
+    <div id="modal-vote" class="hidden fixed inset-0 bg-orange-900 bg-opacity-90 flex items-center justify-center z-50 p-4 backdrop-blur-md">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform scale-100">
+            <div class="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-5 text-orange-600">
+                <i class="fa-solid fa-circle-check text-6xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Anda berhasil melakukan pemilihan!</h2>
+            <p class="text-gray-600 mb-6">Terima kasih atas partisipasi Anda dalam Pemilos SMA Negeri 1 Sleman Tahun 2026.</p>
+            
+            <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                <div id="progress-bar" class="bg-orange-600 h-full"></div>
+            </div>
+            <p class="text-xs text-gray-400 mt-4">Sistem akan kembali ke halaman awal otomatis...</p>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="py-6 text-center text-gray-400 text-sm bg-white border-t border-gray-200 mt-auto">
+        &copy; 2026 Panitia Pemilos SMA Negeri 1 Sleman. All rights reserved.
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA SIMULASI ---
+        const MOCK_USERS = [
+            { username: 'siswa1', password: '123', name: 'Budi Santoso', kelas: 'XI MIPA 1' },
+            { username: 'siswa2', password: '123', name: 'Siti Aminah', kelas: 'X IPS 2' },
+            { username: 'siswa3', password: '123', name: 'Agus Pratama', kelas: 'XII Bahasa' },
+            { username: 'admin', password: 'admin', name: 'Panitia Pemilos', kelas: 'Admin', role: 'admin' }
+        ];
+
+        const CANDIDATES = [
+            { 
+                id: 1, 
+                name: 'Tiara Andini', 
+                // Ganti tulisan 'foto-kandidat-1.jpg' dengan nama file foto Anda yang ada di dalam folder yang sama
+                photo: 'calon1.jpg',
+                visi: 'Mewujudkan OSIS yang aktif, inovatif, dan berkarakter.'
+            },
+            { 
+                id: 2, 
+                name: 'Bagas Prakoso', 
+                // Ganti dengan nama file foto kandidat 2
+                photo: 'calon2.jpg',
+                visi: 'Menjadikan lingkungan sekolah bersih, asri, dan suportif.'
+            },
+            { 
+                id: 3, 
+                name: 'Citra Lestari', 
+                // Ganti dengan nama file foto kandidat 3
+                photo: 'calon3.jpg',
+                visi: 'Membangun kreativitas siswa melalui program ekstrakurikuler unggulan.'
+            }
+        ];
+
+        // --- GLOBAL VARIABLES ---
+        let currentUser = null;
+        
+        // PASTIKAN ANDA MENGGANTI URL DI BAWAH INI DENGAN URL DEPLOYMENT BARU ANDA
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6FIlnV9v-WFipk9rNTTZsGflWujlRSlEI3fboBry3Fjd5jMxR1qvLv1h-eTJnuzeceg/exec'; 
+
+        // --- DOM ELEMENTS ---
+        const viewLogin = document.getElementById('view-login');
+        const viewVoting = document.getElementById('view-voting');
+        const viewAdmin = document.getElementById('view-admin');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const loginErrorText = document.getElementById('login-error-text');
+        const timeWarning = document.getElementById('time-warning');
+        const loginHeader = document.getElementById('login-header');
+        const loginSubtitle = document.getElementById('login-subtitle');
+
+        // --- JAM DIGITAL & CEK WAKTU ---
+        function updateClock() {
+            const now = new Date();
+            
+            // Format Waktu
+            document.getElementById('clock-time').textContent = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+            
+            // Format Tanggal
+            document.getElementById('clock-date').textContent = now.toLocaleDateString('id-ID', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+
+            // Cek Waktu Voting (08:00 - 14:00)
+            const hour = now.getHours();
+            const isVotingOpen = hour >= 8 && hour < 14;
+
+            if (!isVotingOpen) {
+                loginHeader.classList.remove('bg-orange-600');
+                loginHeader.classList.add('bg-red-600');
+                loginSubtitle.textContent = 'Sesi Pemilihan Sedang Ditutup';
+                timeWarning.classList.remove('hidden');
+            } else {
+                loginHeader.classList.remove('bg-red-600');
+                loginHeader.classList.add('bg-orange-600');
+                loginSubtitle.textContent = 'Silakan masuk untuk memberikan suara Anda';
+                timeWarning.classList.add('hidden');
+            }
+            return isVotingOpen;
+        }
+        setInterval(updateClock, 1000);
+        updateClock(); // Panggil pertama kali
+
+        // --- RENDER KANDIDAT ---
+        function renderCandidates() {
+            const container = document.getElementById('candidates-container');
+            container.innerHTML = ''; // Bersihkan kontainer
+            
+            CANDIDATES.forEach(kandidat => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100 group cursor-pointer flex flex-col";
+                card.onclick = () => handleVote(kandidat.id);
+                
+                card.innerHTML = `
+                    <div class="relative">
+                        <div class="absolute top-0 left-0 bg-orange-600 text-white font-black text-2xl w-12 h-12 flex items-center justify-center rounded-br-2xl z-10">
+                            ${kandidat.id}
+                        </div>
+                        <img src="${kandidat.photo}" alt="Foto ${kandidat.name}" class="w-full h-72 object-contain bg-gray-50 object-center group-hover:scale-105 transition-transform duration-500" />
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                            <div class="bg-white text-orange-600 font-bold py-2 px-6 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-lg">
+                                KLIK UNTUK MEMILIH
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 text-center flex-grow flex flex-col">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${kandidat.name}</h3>
+                        <div class="w-16 h-1 bg-orange-500 mx-auto mb-4 rounded-full"></div>
+                        <p class="text-gray-600 text-sm flex-grow italic">&quot;${kandidat.visi}&quot;</p>
+                        <button class="mt-6 w-full bg-gray-100 group-hover:bg-orange-600 group-hover:text-white text-gray-700 font-bold py-3 px-4 rounded-xl transition-colors duration-300">
+                            PILIH KANDIDAT ${kandidat.id}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        renderCandidates();
+
+        // --- RENDER ADMIN TABLE ---
+        function loadAdminData() {
+            const voteData = JSON.parse(localStorage.getItem('pemilos_votes') || '[]');
+            const tbody = document.getElementById('admin-table-body');
+            document.getElementById('total-votes').textContent = voteData.length;
+            tbody.innerHTML = '';
+
+            if (voteData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400">Belum ada data pemilihan yang masuk.</td></tr>`;
+                return;
+            }
+
+            voteData.forEach(vote => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-50 hover:bg-gray-50";
+                tr.innerHTML = `
+                    <td class="p-4 text-sm text-gray-600">${vote.waktu}</td>
+                    <td class="p-4 font-medium text-gray-800">${vote.nama}</td>
+                    <td class="p-4 text-sm text-gray-600">${vote.kelas}</td>
+                    <td class="p-4 font-medium text-orange-700">${vote.kandidat}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- EVENT HANDLERS ---
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            loginError.classList.add('hidden');
+            
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+            const user = MOCK_USERS.find(u => u.username === usernameInput && u.password === passwordInput);
+
+            if (user) {
+                // Admin Akses
+                if (user.role === 'admin') {
+                    currentUser = user;
+                    viewLogin.classList.add('hidden');
+                    viewAdmin.classList.remove('hidden');
+                    loadAdminData();
+                    loginForm.reset();
+                    return;
+                }
+
+                // Cek Rentang Waktu (08.00 - 14.00)
+                const isVotingOpen = updateClock();
+                if (!isVotingOpen) {
+                    showError('Akses Ditolak: Aplikasi hanya dapat digunakan pada rentang pukul 08:00 - 14:00.');
+                    return;
+                }
+
+                // Cek Sudah Memilih
+                const votedUsers = JSON.parse(localStorage.getItem('pemilos_voted_users') || '[]');
+                if (votedUsers.includes(user.username)) {
+                    showError('Akses Ditolak: Anda terindikasi sudah menggunakan hak suara. Pemilihan hanya 1 kali.');
+                    return;
+                }
+
+                // Login Berhasil
+                currentUser = user;
+                loginForm.reset();
+                
+                // Isi data UI Modal & Halaman Voting
+                document.getElementById('modal-voter-name').textContent = currentUser.name;
+                document.getElementById('modal-voter-class').textContent = currentUser.kelas;
+                document.getElementById('voter-name').textContent = currentUser.name;
+                document.getElementById('voter-class').textContent = currentUser.kelas;
+
+                // Tampilkan Modal Login Sukses
+                const modalLogin = document.getElementById('modal-login');
+                modalLogin.classList.remove('hidden');
+
+                // Hilangkan modal & masuk ke halaman voting setelah 3 detik
+                setTimeout(() => {
+                    modalLogin.classList.add('hidden');
+                    viewLogin.classList.add('hidden');
+                    viewVoting.classList.remove('hidden');
+                }, 3000);
+
+            } else {
+                showError('Username atau password salah!');
+            }
+        });
+
+        function showError(msg) {
+            loginErrorText.textContent = msg;
+            loginError.classList.remove('hidden');
+        }
+
+        function handleVote(candidateId) {
+            if (!currentUser) return;
+
+            const candidate = CANDIDATES.find(c => c.id === candidateId);
+            const now = new Date();
+            const newVote = {
+                waktu: now.toLocaleTimeString('id-ID'),
+                nama: currentUser.name,
+                kelas: currentUser.kelas,
+                kandidat: candidate.name
+            };
+
+            // 1. Integrasi API Google Sheets
+            if (GOOGLE_SCRIPT_URL !== 'URL_WEB_APP_ANDA_DISINI') {
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Mencegah pemblokiran origin
+                    // Mengubah tipe pengiriman data menjadi text/plain untuk menghindari pemblokiran preflight CORS
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(newVote)
+                }).catch(err => console.error('Gagal mengirim ke spreadsheet:', err));
+            }
+
+            // 2. Simpan ke LocalStorage untuk Dashboard Admin
+            const existingVotes = JSON.parse(localStorage.getItem('pemilos_votes') || '[]');
+            localStorage.setItem('pemilos_votes', JSON.stringify([...existingVotes, newVote]));
+
+            // 3. Catat User Sudah Memilih
+            const votedUsers = JSON.parse(localStorage.getItem('pemilos_voted_users') || '[]');
+            localStorage.setItem('pemilos_voted_users', JSON.stringify([...votedUsers, currentUser.username]));
+
+            // 4. Tampilkan Notifikasi Sukses Memilih
+            const modalVote = document.getElementById('modal-vote');
+            const progressBar = document.getElementById('progress-bar');
+            
+            modalVote.classList.remove('hidden');
+            // Reset dan mulai animasi loading bar
+            progressBar.classList.remove('progress-bar-animate');
+            void progressBar.offsetWidth; // trigger reflow
+            progressBar.classList.add('progress-bar-animate');
+
+            // 5. Auto Logout dan kembali ke awal
+            setTimeout(() => {
+                modalVote.classList.add('hidden');
+                handleLogout();
+            }, 3000);
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            viewVoting.classList.add('hidden');
+            viewAdmin.classList.add('hidden');
+            viewLogin.classList.remove('hidden');
+        }
+
+        function resetData() {
+            if (confirm('Hapus semua data pemilihan untuk pengujian ulang?')) {
+                localStorage.removeItem('pemilos_votes');
+                localStorage.removeItem('pemilos_voted_users');
+                loadAdminData();
+            }
+        }
+    </script>
+</body>
+</html>
